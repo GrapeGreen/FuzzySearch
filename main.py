@@ -1,19 +1,24 @@
 import data, random, string
 from itertools import permutations
 
+
 def cost_insert(s):
+    """ eps -> s """
     return 1
 
 
 def cost_delete(s):
+    """ s -> eps """
     return 1
 
 
-def cost_swap(s, t):
+def cost_transpose(s, t):
+    """ st -> ts """
     return 1
 
 
 def cost_subst(s, t):
+    """ s -> t """
     return 1 if s != t else 0
 
 
@@ -33,17 +38,20 @@ def levenshtein(s, t):
             x = min(dp[i - 1][j] + cost_insert(s[i - 1]), dp[i][j - 1] + cost_delete(t[j - 1]))
             x = min(x, dp[i - 1][j - 1] + cost_subst(s[i - 1], t[j - 1]))
             if i > 1 and j > 1 and s[i - 1] == t[j - 2] and s[i - 2] == t[j - 1]:
-                x = min(x, dp[i - 2][j - 2] + cost_swap(s[i - 1], t[j - 1]))
+                x = min(x, dp[i - 2][j - 2] + cost_transpose(s[i - 1], t[j - 1]))
 
             # TODO: aa -> a & a -> aa
 
             dp[i][j] = x
-
+            
     return dp[len(s)][len(t)]
+
+    #TODO: backtracing
 
 
 def song_comparison(s, t): 
-    """n = len(s), m = len(t), n < m -> among all A(m, n) combinations we choose minimal \
+    """n = len(s), m = len(t), n < m -> \
+    among all A(m, n) combinations we choose minimal \
     by sum of corresponding Levenshtein distances"""
 
     # Warning: too slow :(
