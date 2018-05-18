@@ -3,6 +3,9 @@ from levenshtein import Operation
 import re
 
 d = defaultdict(float)
+
+c = defaultdict(float)
+
 types = defaultdict(lambda : defaultdict(tuple))
 
 total = 0
@@ -31,10 +34,12 @@ with open('mistakes.txt', 'r') as f:
 
         types[TYPE][(old, new)] = freq
 
+        for len_x in range(1, 3):
+            for len_y in range(1, 3):
+                for i in range(len(old) - len_x + 1):
+                    for j in range(len(new) - len_y + 1):
+                        c[(old[i : i + len_x], new[j : j + len_y])] += freq
 
-for op in types:
-    print(op)
-    print(types[op])
 
 for key in d:
     d[key] /= total

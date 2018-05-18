@@ -20,5 +20,10 @@ with open('db.txt', 'r', encoding='utf-8') as f:
             d[s.lower()] += 1
             inv[s.lower()].append(t)
 
+#print(total)
+#print(d['you'])
+#print(d['the'])
+#print(d['love'])
+
 for key in d:
     d[key] /= total

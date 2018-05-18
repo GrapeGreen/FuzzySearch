@@ -1,24 +1,24 @@
 import data, mistakes
-from levenshtein import levenshtein
+from levenshtein import levenshtein, lightweight_lvs
 
 import random, string
 from itertools import permutations
 
 
-def song_comparison(s, t): #full comparison for
+def song_comparison(s, t):
     s, t = s.split(), t.split()
     similarity = 10 ** 9
     if len(s) > len(t):
         return levenshtein(' '.join(s), ' '.join(t))
 
     for p in permutations(t, len(s)):
+        #print(s, p)
         similarity = min(similarity, sum(levenshtein(u, v) for (u, v) in zip(s, p)))
 
     return similarity
 
 
 def noise(s, Q = 3):
-    """Randomly changes one random symbol of the given string exactly Q times"""
     for i in range(Q):
         j = random.choice(range(len(s)))
         c = random.choice(string.ascii_lowercase)
@@ -32,32 +32,46 @@ def search(s, Q = 2): #old
     return list(filter(lambda x : song_comparison(s, x) <= Q, ans))
 
 
-def noisy_comparison(s, t): # s - наш паттерн, t - некоторое слово, посчитать log P(t) + sum log ...
-    pass
+def top_frequent(s, Q):
+    #return [s] if s in data.inv else []
+    return [key for key in data.inv if abs(len(s) - len(key)) <= Q and lightweight_lvs(s, key) <= Q + 1]
 
 
-def top_frequent(s): # взять top сколько-то слов по noisy_comparison(s, word) for word in data.inv
-    pass
+def full_search(s, Q = 2):
+    s = ' '.join(t.lower() for t in s.split())
 
-
-def full_search(s):
     words = s.split()
+    #print(words)
+    #candidates = [data.inv[x] for x in top_frequent(word) for word in words]
+
+    candidates = []
+    for word in words:
+        array = []
+        for x in top_frequent(word, Q):
+            #print(x)
+            #print(word)
+            #print(x)
+
+            array.extend(data.inv[x])
+        candidates += [array]
+
+    assert candidates
+    #print(len(candidates))
+    #print(candidates)
+
+    intersection = set(data.songs)
+
+    for can in candidates:
+        if len(can) > 5:
+            intersection &= set(can)
+
+    return [x for x in intersection if song_comparison(s, x) <= Q]
 
 
-res = search("2pac it")
-for i in res:
-    print(i)
-
-""" K = 4
-for i in range(1):
-    s = noise(random.choice(data.songs))
-
-    print(s)
-
-    j = 0
-    for q in data.songs:
-        j += 1
-        print(j)
-        if song_comparison(s, q) <= K:
-            print(q)
-"""
+s = input()
+res = full_search(s, 1)
+print('\n'.join(sorted(res)))
+print()
+res = full_search(s, 2)
+print('\n'.join(sorted(res)))
+print()

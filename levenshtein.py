@@ -49,7 +49,28 @@ def cost_single(s):
     return 0
 
 
-def levenshtein(s, t):
+def lightweight_lvs(s, t):
+    n, m = len(s), len(t)
+    dp = [[10 ** 9 for _ in range(m + 1)] for _ in range(n + 1)]
+
+    dp[0][0] = 0
+
+    for i in range(1, n + 1):
+        dp[i][0] = dp[i - 1][0] + cost_delete(s[i - 1])
+    for j in range(1, m + 1):
+        dp[0][j] = dp[0][j - 1] + cost_insert(t[j - 1])
+
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            res = [dp[i - 1][j] + cost_delete(s[i - 1]),
+                   dp[i][j - 1] + cost_insert(t[j - 1]),
+                   dp[i - 1][j - 1] + cost_subst(s[i - 1], t[j - 1])]
+            dp[i][j] = min(res)
+
+    return dp[-1][-1]
+
+
+def levenshtein(s, t, mode = False):
     n, m = len(s), len(t)
     dp = [[[10 ** 9, Operation.NONE] for _ in range(m + 1)] for _ in range(n + 1)]
 
@@ -76,7 +97,8 @@ def levenshtein(s, t):
 
             dp[i][j] = min(results, key = lambda x : x[0])
 
-    #return dp[-1][-1][0]
+    if not mode:
+        return dp[-1][-1][0]
 
     x, y = len(s), len(t)
 
@@ -100,8 +122,8 @@ def levenshtein(s, t):
                 x -= 1
             elif op_type == Operation.SUBSTITUTE:
                 u, v = dp[x][y][-2:]
-                #if u != v:
-                backtrace.append([op_type, u + '->' + v])
+                if u != v:
+                    backtrace.append([op_type, u + '->' + v])
                 x, y = x - 1, y - 1
             elif op_type == Operation.TRANSPOSE:
                 u, v = dp[x][y][-2:]
@@ -121,11 +143,11 @@ def levenshtein(s, t):
 
     #print(s)
     #print(t)
-    print(backtrace)
+    #print(backtrace)
 
     #print()
 
-    return dp[-1][-1][0]
+    return backtrace
 
 #levenshtein('imagine', 'john')
 #levenshtein('demns', 'bayless')
