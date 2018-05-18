@@ -9,6 +9,7 @@ ZERO_PROBABILITY = 1 / 10 ** 12
 TOP = 15
 FIX = 1 / 10
 
+
 def calculate_all(s, Q = 2):
     probs = [x for x in data.inv if abs(len(x) - len(s)) <= Q and lightweight_lvs(s, x) <= Q + 1]
     probs.sort(key=lambda x: calculate_probs(s, x, Q), reverse=True)
