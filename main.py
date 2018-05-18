@@ -43,8 +43,8 @@ def full_search(s, Q = 2):
     intersection = set(data.songs)
 
     for can in candidates:
-        if len(can) > 5:
-            intersection &= set(can)
+        #if len(can) > 5:
+        intersection &= set(can)
 
     print('shortlist : ', intersection)
     return [x for x in intersection if song_comparison(s, x) <= Q]
