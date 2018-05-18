@@ -63,8 +63,8 @@ def levenshtein(s, t):
     for i in range(1, n + 1):
         for j in range(1, m + 1):
             results = [
-                [dp[i - 1][j][0] + cost_delete(s[i - 1]), Operation.DELETE, s[i - 1]],
-                [dp[i][j - 1][0] + cost_insert(t[j - 1]), Operation.ADD, t[j - 1]],
+                [dp[i - 1][j][0] + cost_delete(s[i - 1]), Operation.DELETE, s[i - 2] + s[i - 1] if i > 1 else s[i - 1], s[i - 2] if i > 1 else ''],
+                [dp[i][j - 1][0] + cost_insert(t[j - 1]), Operation.ADD, t[j - 2] if j > 1 else '', t[j - 2] + t[j - 1] if j > 1 else t[j - 1]],
                 [dp[i - 1][j - 1][0] + cost_subst(s[i - 1], t[j - 1]), Operation.SUBSTITUTE, s[i - 1], t[j - 1]],
                 [dp[i - 2][j - 2][0] + cost_transpose(s[i - 1], t[j - 1]), Operation.TRANSPOSE, s[i - 1], t[j - 1]]
                 if i > 1 and j > 1 and s[i - 1] == t[j - 2] and s[i - 2] == t[j - 1] else [10 ** 9],
@@ -91,34 +91,46 @@ def levenshtein(s, t):
             if op_type == Operation.NONE:
                 assert False
             elif op_type == Operation.ADD:
-                backtrace.append([op_type, dp[x][y][-1]])
+                u, v = dp[x][y][-2:]
+                backtrace.append([op_type, u + '->' + v])
                 y -= 1
             elif op_type == Operation.DELETE:
-                backtrace.append([op_type, dp[x][y][-1]])
+                u, v = dp[x][y][-2:]
+                backtrace.append([op_type, u + '->' + v])
                 x -= 1
             elif op_type == Operation.SUBSTITUTE:
                 u, v = dp[x][y][-2:]
                 #if u != v:
-                backtrace.append([op_type, u + ' -> ' + v])
+                backtrace.append([op_type, u + '->' + v])
                 x, y = x - 1, y - 1
             elif op_type == Operation.TRANSPOSE:
                 u, v = dp[x][y][-2:]
-                backtrace.append([op_type, u + ' <-> ' + v])
+                backtrace.append([op_type, u + v + '->' + v + u])
                 x, y = x - 2, y - 2
             elif op_type == Operation.SINGLE:
+                backtrace.append([op_type, dp[x][y][-1] * 2 + '->' + dp[x][y][-1]])
                 x, y = x - 2, y - 1
-                backtrace.append([op_type, s[y] * 2 + ' -> ' + s[y]])
             elif op_type == Operation.DOUBLE:
+                backtrace.append([op_type, dp[x][y][-1] + '->' + dp[x][y][-1] * 2])
                 x, y = x - 1, y - 2
-                backtrace.append([op_type, s[y] + ' -> ' + s[y] * 2])
         except IndexError as e:
-            assert(0)
+            print('Aaaaa blyadddddddddddddddd')
+            assert 0
 
     backtrace = backtrace[::-1]
-    print(s)
-    print(t)
+
+    #print(s)
+    #print(t)
     print(backtrace)
 
-    print()
+    #print()
 
     return dp[-1][-1][0]
+
+#levenshtein('imagine', 'john')
+#levenshtein('demns', 'bayless')
+
+#levenshtein('axy', 'ax')
+#levenshtein('ax', 'axy')
+
+#levenshtein('ab', 'ba')
