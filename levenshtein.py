@@ -147,7 +147,7 @@ def levenshtein(s, t, mode = False):
 
     #print()
 
-    return backtrace
+    return dp[-1][-1][0], backtrace
 
 #levenshtein('imagine', 'john')
 #levenshtein('demns', 'bayless')
