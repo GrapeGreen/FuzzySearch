@@ -1,32 +1,24 @@
 import data, mistakes
 from numpy import log
-from levenshtein import levenshtein
-from collections import namedtuple
+from levenshtein import levenshtein, lightweight_lvs
+
 
 # time for some MAGIC!
-FREQUENCY_REDUCTION = 1 / 10 ** 4
+FREQUENCY_REDUCTION = 1 / 10 ** 6
 ZERO_PROBABILITY = 1 / 10 ** 12
+TOP = 30
 
-
-def laplas_smooth(fr_f, type):
-    type_fr = sum(mistakes.types[type].values())
-    unique_mistakes = len(mistakes.types[type])
-
-    return (fr_f + 1) / (type_fr + unique_mistakes)
-
-
-def calculate_all(s):
-    probs = [x for x in data.inv if abs(len(x) - len(s)) <= 1]
+def calculate_all(s, Q = 2):
+    probs = [x for x in data.inv if abs(len(x) - len(s)) <= Q and lightweight_lvs(s, x) <= Q + 1]
     probs.sort(key=lambda x: calculate_probs(s, x), reverse=True)
 
-    return probs[:10]
+    leftover = probs if len(probs) <= TOP else probs[:TOP]
+    print('debug : ', leftover)
+    return leftover
 
 
 def calculate_probs(s, t):
     dist, ops = levenshtein(s, t, True)
-    if dist > 2:
-        return - 10 ** 18
-
     op_types = []
     symbs = []
 
@@ -43,10 +35,3 @@ def calculate_probs(s, t):
             probs += log(ZERO_PROBABILITY)
 
     return probs
-
-
-s = input()
-res = calculate_all(s)
-
-for word in res:
-    print(word, calculate_probs(s, word))

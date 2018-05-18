@@ -34,8 +34,6 @@ def cost_transpose(s, t):
 def cost_subst(s, t):
     """ s -> t """
     if s == t: return 0
-
-    # tons of code ?
     return 1
 
 
@@ -84,9 +82,10 @@ def levenshtein(s, t, mode = False):
     for i in range(1, n + 1):
         for j in range(1, m + 1):
             results = [
+                [dp[i - 1][j - 1][0] + cost_subst(s[i - 1], t[j - 1]), Operation.SUBSTITUTE, s[i - 1], t[j - 1]],
                 [dp[i - 1][j][0] + cost_delete(s[i - 1]), Operation.DELETE, s[i - 2] + s[i - 1] if i > 1 else s[i - 1], s[i - 2] if i > 1 else ''],
                 [dp[i][j - 1][0] + cost_insert(t[j - 1]), Operation.ADD, t[j - 2] if j > 1 else '', t[j - 2] + t[j - 1] if j > 1 else t[j - 1]],
-                [dp[i - 1][j - 1][0] + cost_subst(s[i - 1], t[j - 1]), Operation.SUBSTITUTE, s[i - 1], t[j - 1]],
+                #[dp[i - 1][j - 1][0] + cost_subst(s[i - 1], t[j - 1]), Operation.SUBSTITUTE, s[i - 1], t[j - 1]],
                 [dp[i - 2][j - 2][0] + cost_transpose(s[i - 1], t[j - 1]), Operation.TRANSPOSE, s[i - 1], t[j - 1]]
                 if i > 1 and j > 1 and s[i - 1] == t[j - 2] and s[i - 2] == t[j - 1] else [10 ** 9],
                 [dp[i - 2][j - 1][0] + cost_single(s[i - 1]), Operation.SINGLE, s[i - 1]]
@@ -141,18 +140,6 @@ def levenshtein(s, t, mode = False):
 
     backtrace = backtrace[::-1]
 
-    #print(s)
-    #print(t)
     #print(backtrace)
 
-    #print()
-
     return dp[-1][-1][0], backtrace
-
-#levenshtein('imagine', 'john')
-#levenshtein('demns', 'bayless')
-
-#levenshtein('axy', 'ax')
-#levenshtein('ax', 'axy')
-
-#levenshtein('ab', 'ba')
