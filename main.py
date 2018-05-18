@@ -32,11 +32,11 @@ def search(s, Q = 2): #old
     return list(filter(lambda x : song_comparison(s, x) <= Q, ans))
 
 
-def noisy_comparison(s, t):
+def noisy_comparison(s, t): # s - наш паттерн, t - некоторое слово, посчитать log P(t) + sum log ...
     pass
 
 
-def top_frequent(s):
+def top_frequent(s): # взять top сколько-то слов по noisy_comparison(s, word) for word in data.inv
     pass
 
 
