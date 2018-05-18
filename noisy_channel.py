@@ -23,7 +23,9 @@ def calculate_all(s):
 
 
 def calculate_probs(s, t):
-    ops = levenshtein(s, t, True)
+    dist, ops = levenshtein(s, t, True)
+    if dist > 2:
+        return - 10 ** 18
 
     op_types = []
     symbs = []
