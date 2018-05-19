@@ -143,3 +143,50 @@ def levenshtein(s, t, mode = False):
     #print(backtrace)
 
     return dp[-1][-1][0], backtrace
+
+
+def min_weight_max_matching(n, m, cost_array):
+    arr = [[0 for j in range(m + 1)] for i in range(n + 1)]
+    for i in range(n):
+        for j in range(m):
+            arr[i + 1][j + 1] = cost_array[i][j]
+
+    u = [0 for i in range(n + 1)]
+    v = [0 for i in range(m + 1)]
+    p = [0 for i in range(m + 1)]
+    way = [0 for i in range(m + 1)]
+
+    for i in range(1, n + 1):
+        p[0] = i
+        q = 0
+
+        minv = [10 ** 9 for _ in range(m + 1)]
+        used = [0 for _ in range(m + 1)]
+
+        while True:
+            used[q] = 1
+            k, delta = p[q], 10 ** 9
+            J = -1
+            for j in range(1, m + 1):
+                if not used[j]:
+                    curr = arr[k][j] - u[k] - v[j]
+                    if curr < minv[j]:
+                        minv[j], way[j] = curr, q
+                    if minv[j] < delta:
+                        delta, J = minv[j], j
+            for j in range(m + 1):
+                if used[j]:
+                    u[p[j]] += delta
+                    v[j] -= delta
+                else:
+                    minv[j] -= delta
+            q = J
+            if not p[q]: break
+
+        while True:
+            J = way[q]
+            p[q] = p[J]
+            q = J
+            if not q: break
+
+    return -v[0]

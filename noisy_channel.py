@@ -15,7 +15,7 @@ def calculate_all(s, Q = 2):
     probs.sort(key=lambda x: calculate_probs(s, x, Q), reverse=True)
 
     leftover = probs if len(probs) <= TOP else probs[:TOP]
-    print('debug : ', [(word, calculate_probs(s, word)) for word in leftover])
+    #print('debug : ', [(word, calculate_probs(s, word)) for word in leftover])
     return leftover
 
 
