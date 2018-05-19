@@ -17,7 +17,7 @@ def song_comparison(s, t):
     if n > m:
         return similarity
 
-    if len(n) > 2:
+    if n > 2:
         #print(s, t)
         arr = [[10 ** 9 for i in range(m)] for j in range(n)]
         #print(arr)
@@ -59,7 +59,9 @@ def full_search(s, Q = 2):
             array.extend(data.inv[x])
         candidates += [array]
 
-    assert candidates
+    #assert candidates
+    if not candidates:
+        return []
     #print(len(candidates))
     #print(candidates)
 
